@@ -1,0 +1,3 @@
+"""
+Applications Django GestionBailleur
+"""

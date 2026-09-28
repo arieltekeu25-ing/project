@@ -1,0 +1,3 @@
+"""
+Module clients.serializers
+"""

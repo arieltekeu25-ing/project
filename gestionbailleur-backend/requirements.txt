@@ -1,0 +1,53 @@
+# Django
+Django>=4.2,<5.0
+djangorestframework>=3.14.0
+django-cors-headers>=4.0.0
+django-filter>=23.0
+drf-spectacular>=0.26.0
+
+# Authentication
+djangorestframework-simplejwt>=5.2.0
+
+# Database
+psycopg2-binary>=2.9.0
+
+# Cache
+django-redis>=5.2.0
+redis>=4.5.0
+
+# Task Queue
+celery>=5.3.0
+django-celery-beat>=2.5.0
+
+# Storage
+django-storages>=1.13.0
+boto3>=1.28.0
+cloudinary>=1.36.0
+
+# Security
+django-ratelimit>=4.0.0
+
+# Email
+django-anymail>=10.0
+
+# API Documentation
+drf-yasg>=1.21.0
+
+# Utilities
+python-decouple>=3.8
+python-dotenv>=1.0.0
+pillow>=10.0.0
+pytz>=2023.0
+
+# Production Server
+gunicorn>=21.0.0
+uvicorn[standard]>=0.22.0
+whitenoise>=6.4.0
+
+# Monitoring
+sentry-sdk>=1.28.0
+django-prometheus>=2.3.0
+
+# Production Security
+django-axes>=6.0.0
+django-admin-honeypot>=1.0.0

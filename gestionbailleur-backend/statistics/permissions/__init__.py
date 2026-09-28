@@ -1,0 +1,3 @@
+"""
+Module statistics.permissions
+"""

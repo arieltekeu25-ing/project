@@ -1,0 +1,18 @@
+-r base.txt
+
+# Production Server
+gunicorn>=21.0.0
+uvicorn[standard]>=0.22.0
+whitenoise>=6.4.0
+
+# Monitoring
+sentry-sdk>=1.28.0
+django-prometheus>=2.3.0
+
+# Performance
+django-storages>=1.13.0
+boto3>=1.28.0
+
+# Security
+django-axes>=6.0.0
+django-admin-honeypot>=1.0.0

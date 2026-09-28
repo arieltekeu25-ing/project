@@ -1,0 +1,3 @@
+"""
+Module dashboard.tests
+"""

@@ -1,0 +1,10 @@
+"""
+Configuration de l'application landlords
+"""
+from django.apps import AppConfig
+
+
+class LandlordsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.landlords'
+    verbose_name = 'Landlords'

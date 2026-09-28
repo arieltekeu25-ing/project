@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Splash natif : fond bleu clair + logo centré réduit (pas de zoom) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item
+        android:width="120dp"
+        android:height="120dp"
+        android:gravity="center">
+        <bitmap
+            android:gravity="fill"
+            android:src="@drawable/ic_launcher_foreground" />
+    </item>
+</layer-list>

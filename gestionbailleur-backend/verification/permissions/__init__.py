@@ -1,0 +1,3 @@
+"""
+Module verification.permissions
+"""
