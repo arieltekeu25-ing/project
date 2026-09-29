@@ -58,7 +58,9 @@ class AIService:
         Extrait les critères de recherche réels à partir du texte en langage naturel.
         """
         query_lower = query_text.lower()
-               # Type de logement
+        criteria = {}
+
+        # Type de logement
         if 'studio' in query_lower:
             criteria['property_type'] = 'STUDIO'
         elif 'duplex' in query_lower:
@@ -343,5 +345,4 @@ class AIService:
         return (
             "Je recherche les meilleures opportunités pour vous. "
             "Précisez-moi la ville (ex: Yaoundé, Douala), le nombre de chambres ou votre budget maximum en FCFA !"
-        ), {'intent': 'general'}ous trouverai les meilleures offres sur GestBailleur."
         ), {'intent': 'general'}
