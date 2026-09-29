@@ -12,7 +12,7 @@ class AppConfig {
   // Android physique avec backend local : utiliser --dart-define=API_BASE_URL=http://192.168.x.x:8000
   static const String apiBaseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://localhost:8000', // Backend local par défaut pour le développement
+    defaultValue: 'https://project-production-0e57.up.railway.app', // Backend de production sur Railway
   );
 
   static const int apiTimeout = 60000; // 60 secondes (60000ms) pour les requêtes API et l'IA
