@@ -27,40 +27,40 @@ class PropertyCard extends ConsumerWidget {
     final isFavoriteGlobal = favState.favoriteIds.contains(property.id) || property.isFavorite;
 
     return Card(
-      elevation: 2,
+      elevation: 3,
+      shadowColor: Colors.black.withValues(alpha: 0.1),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
+        borderRadius: BorderRadius.circular(16),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppConstants.borderRadiusLarge),
+        borderRadius: BorderRadius.circular(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
           children: [
             // Image avec badge et bouton favori
             SizedBox(
-              height: 150,
+              height: 180,
               width: double.infinity,
               child: Stack(
                 children: [
                   Positioned.fill(
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(AppConstants.borderRadiusLarge),
+                        top: Radius.circular(16),
                       ),
                       child: _buildPropertyImage(property),
                     ),
                   ),
                   Positioned(
-                    top: AppConstants.spacingSmall,
-                    left: AppConstants.spacingSmall,
+                    top: 12,
+                    left: 12,
                     child: _buildStatusBadge(property.status, theme),
                   ),
                   Positioned(
-                    top: AppConstants.spacingSmall,
-                    right: AppConstants.spacingSmall,
+                    top: 12,
+                    right: 12,
                     child: FavoriteButton(
                       isFavorite: isFavoriteGlobal,
                       isLoading: ref.watch(favoritesProvider).actionPropertyIdLoading == property.id,
@@ -75,106 +75,95 @@ class PropertyCard extends ConsumerWidget {
                 ],
               ),
             ),
-            // Contenu
+            // Contenu de la carte
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(AppConstants.spacingXSmall),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Prix
-                      Text(
-                        property.formattedPrice,
-                        style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      // Titre
-                      Text(
-                        property.title,
-                        style: theme.textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
-                        maxLines: 1,
-                        softWrap: true,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      // Description (tronquée)
-                      if (property.description.isNotEmpty) ...[
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Prix
                         Text(
-                          property.description,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontSize: 10,
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                          ),
-                          maxLines: 2,
+                          property.formattedPrice,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                              ),
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
+                        // Titre
+                        Text(
+                          property.title,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        // Localisation
+                        Row(
+                          children: [
+                            Icon(Icons.location_on, size: 14, color: Colors.grey[600]),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                property.city.isNotEmpty
+                                    ? '${property.city}${property.district.isNotEmpty ? ", " + property.district : ""}'
+                                    : (property.district.isNotEmpty ? property.district : 'Emplacement non spécifié'),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: Colors.grey[700],
+                                  fontSize: 12,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // Caractéristiques
+                        Row(
+                          children: [
+                            _buildFeature(Icons.bed, '${property.bedrooms} chb'),
+                            const SizedBox(width: 12),
+                            _buildFeature(Icons.bathtub, '${property.bathrooms} sdb'),
+                            const SizedBox(width: 12),
+                            _buildFeature(Icons.square_foot, property.formattedSurface),
+                          ],
+                        ),
                       ],
-                      // Localisation
-                      Row(
-                        children: [
-                          const Icon(Icons.location_on, size: 10, color: Colors.grey),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: Text(
-                              property.city.isNotEmpty ? '${property.city}, ${property.district}' : property.district,
-                              style: theme.textTheme.bodySmall?.copyWith(fontSize: 10),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                    ),
+                    const SizedBox(height: 10),
+                    // Bouton voir détails
+                    SizedBox(
+                      width: double.infinity,
+                      height: 36,
+                      child: ElevatedButton(
+                        onPressed: onTap,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      // Caractéristiques
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildFeature(
-                              Icons.bed,
-                              '${property.bedrooms}',
-                            ),
-                          ),
-                          const SizedBox(width: 2),
-                          Expanded(
-                            child: _buildFeature(
-                              Icons.bathtub,
-                              '${property.bathrooms}',
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: _buildFeature(
-                              Icons.square_foot,
-                              property.formattedSurface,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      // Bouton voir détails
-                      SizedBox(
-                        width: double.infinity,
-                        height: 24,
-                        child: OutlinedButton(
-                          onPressed: onTap,
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          child: const Text(AppStrings.viewDetails, style: TextStyle(fontSize: 10)),
+                        ),
+                        child: const Text(
+                          AppStrings.viewDetails,
+                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -186,12 +175,13 @@ class PropertyCard extends ConsumerWidget {
 
   Widget _buildFeature(IconData icon, String value) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 10, color: Colors.grey[600]),
-        const SizedBox(width: 2),
+        Icon(icon, size: 14, color: Colors.grey[600]),
+        const SizedBox(width: 4),
         Text(
           value,
-          style: const TextStyle(fontSize: 9, color: Colors.grey),
+          style: TextStyle(fontSize: 11, color: Colors.grey[700], fontWeight: FontWeight.w500),
         ),
       ],
     );

@@ -150,92 +150,69 @@ class _PropertiesSectionState extends ConsumerState<PropertiesSection> {
   }
 
   Widget _buildPropertiesCarousel(BuildContext context, WidgetRef ref, List<PropertyModel> properties, ThemeData theme) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWebDesktop = screenWidth >= 768;
+
+    if (isWebDesktop) {
+      // Version WEB / DESKTOP : Grille responsive avec max-width 1200px
+      final crossAxisCount = screenWidth >= 1100 ? 3 : 2;
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1200),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: properties.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: 24,
+              crossAxisSpacing: 24,
+              childAspectRatio: 0.85,
+            ),
+            itemBuilder: (context, index) {
+              final property = properties[index];
+              return PropertyCard(
+                property: property,
+                onTap: () {
+                  context.go(AppConstants.routePropertyDetails.replaceFirst(':id', property.id));
+                },
+                onFavoriteToggle: () {
+                  ref.read(propertyProvider.notifier).toggleFavorite(property.id);
+                },
+              );
+            },
+          ),
+        ),
+      );
+    }
+
+    // Version MOBILE : Carousel horizontal avec cartes de largeur fixe 300px
     return SizedBox(
-      height: 340,
+      height: 380,
       child: Column(
         children: [
           Expanded(
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentPage = index;
-                });
-              },
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               itemCount: properties.length,
+              separatorBuilder: (context, index) => const SizedBox(width: 16),
               itemBuilder: (context, index) {
                 final property = properties[index];
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: PropertyCard(
-                      property: property,
-                      onTap: () {
-                        context.go(AppConstants.routePropertyDetails.replaceFirst(':id', property.id));
-                      },
-                      onFavoriteToggle: () {
-                        ref.read(propertyProvider.notifier).toggleFavorite(property.id);
-                      },
-                    ),
+                return SizedBox(
+                  width: 300,
+                  child: PropertyCard(
+                    property: property,
+                    onTap: () {
+                      context.go(AppConstants.routePropertyDetails.replaceFirst(':id', property.id));
+                    },
+                    onFavoriteToggle: () {
+                      ref.read(propertyProvider.notifier).toggleFavorite(property.id);
+                    },
                   ),
                 );
               },
             ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: _currentPage > 0
-                    ? () {
-                        _pageController.previousPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      }
-                    : null,
-                icon: const Icon(Icons.chevron_left),
-                style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: Colors.grey,
-                  padding: const EdgeInsets.all(6),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: theme.dividerColor),
-                ),
-                child: Text(
-                  '${_currentPage + 1} / ${properties.length}',
-                  style: theme.textTheme.bodySmall,
-                ),
-              ),
-              const SizedBox(width: 8),
-              IconButton(
-                onPressed: _currentPage < properties.length - 1
-                    ? () {
-                        _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      }
-                    : null,
-                icon: const Icon(Icons.chevron_right),
-                style: IconButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: Colors.grey,
-                  padding: const EdgeInsets.all(6),
-                ),
-              ),
-            ],
           ),
         ],
       ),
