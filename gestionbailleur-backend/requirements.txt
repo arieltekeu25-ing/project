@@ -10,6 +10,7 @@ djangorestframework-simplejwt>=5.2.0
 
 # Database
 psycopg2-binary>=2.9.0
+psycopg[binary]>=3.1.0
 
 # Cache
 django-redis>=5.2.0
@@ -41,7 +42,7 @@ pytz>=2023.0
 
 # Production Server
 gunicorn>=21.0.0
-uvicorn[standard]>=0.22.0
+uvicorn>=0.22.0
 whitenoise>=6.4.0
 
 # Monitoring
@@ -50,4 +51,3 @@ django-prometheus>=2.3.0
 
 # Production Security
 django-axes>=6.0.0
-django-admin-honeypot>=1.0.0
