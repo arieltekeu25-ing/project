@@ -1,2 +1,3 @@
+# Railway deployment config
 [deploy]
 startCommand = "bash start.sh"
