@@ -63,6 +63,7 @@ AI_MODEL_NAME = os.environ.get('AI_MODEL_NAME', 'gemini-3.6-flash')
 # Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
