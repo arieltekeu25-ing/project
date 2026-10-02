@@ -30,10 +30,15 @@ class AIService:
             key = (
                 os.getenv('AI_API_KEY') or
                 os.getenv('GEMINI_API_KEY') or
+                os.getenv('GOOGLE_API_KEY') or
+                os.getenv('CHATBOT_API_KEY') or
+                os.getenv('API_KEY') or
                 os.getenv('OPENAI_API_KEY') or
                 os.getenv('GROQ_API_KEY') or
                 os.getenv('MISTRAL_API_KEY')
             )
+        if key:
+            key = str(key).strip().strip('"').strip("'")
         return key
 
     @classmethod
@@ -233,25 +238,13 @@ class AIService:
         # === APPEL GEMINI EN PREMIER ===
         if api_key:
             try:
-                model_name = os.getenv('AI_MODEL_NAME', 'gemini-3.6-flash')
-                deprecated_models = [
-                    'gemini', 'gemini-flash',
-                    'gemini-1.5-flash', 'gemini-1.5-pro',
-                    'gemini-2.0-flash', 'gemini-2.5-flash',
+                candidate_models = [
+                    os.getenv('AI_MODEL_NAME'),
+                    'gemini-2.5-flash',
+                    'gemini-2.0-flash',
+                    'gemini-1.5-flash',
                 ]
-                if model_name in deprecated_models:
-                    model_name = 'gemini-3.6-flash'
-
-                gemini_url = (
-                    "https://generativelanguage.googleapis.com/v1beta/models/"
-                    + model_name
-                    + ":generateContent?key="
-                    + api_key
-                )
-                logger.info(
-                    "[GestBailleur AI] Appel Gemini -> modele: %s | msg: %s",
-                    model_name, user_message_text[:50]
-                )
+                models_to_try = [m for m in candidate_models if m]
 
                 contents = []
                 if history_messages:
@@ -280,21 +273,38 @@ class AIService:
                     }
                 }
 
-                resp = requests.post(gemini_url, json=payload, timeout=30)
-                if resp.status_code == 200:
-                    data = resp.json()
-                    candidates = data.get("candidates", [])
-                    if candidates:
-                        parts = candidates[0].get("content", {}).get("parts", [])
-                        text_pieces = [p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")]
-                        full_text = "".join(text_pieces).strip()
-                        if full_text:
-                            return full_text, {
-                                'search_criteria': search_criteria,
-                                'properties_found': [str(p.id) for p in real_properties],
-                                'model': model_name,
-                            }
-                logger.error("[GestBailleur AI] Gemini HTTP %s", resp.status_code)
+                headers = {
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": api_key,
+                }
+
+                for model_name in models_to_try:
+                    gemini_url = (
+                        f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={api_key}"
+                    )
+                    logger.info(
+                        "[GestBailleur AI] Appel Gemini -> modele: %s | msg: %s",
+                        model_name, user_message_text[:50]
+                    )
+
+                    resp = requests.post(gemini_url, headers=headers, json=payload, timeout=25)
+                    if resp.status_code == 200:
+                        data = resp.json()
+                        candidates = data.get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            text_pieces = [p.get("text", "") for p in parts if isinstance(p, dict) and p.get("text")]
+                            full_text = "".join(text_pieces).strip()
+                            if full_text:
+                                return full_text, {
+                                    'search_criteria': search_criteria,
+                                    'properties_found': [str(p.id) for p in real_properties],
+                                    'model': model_name,
+                                }
+                    logger.error("[GestBailleur AI] Gemini HTTP %s (%s): %s", resp.status_code, model_name, resp.text[:250])
+                    # If error is authentication (401/403), no need to retry other models
+                    if resp.status_code in [401, 403]:
+                        break
             except Exception as e:
                 logger.error("[GestBailleur AI] Exception appel IA: %s: %s", type(e).__name__, str(e))
 
