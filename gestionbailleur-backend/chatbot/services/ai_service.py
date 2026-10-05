@@ -240,11 +240,16 @@ class AIService:
             try:
                 candidate_models = [
                     os.getenv('AI_MODEL_NAME'),
-                    'gemini-2.5-flash',
-                    'gemini-2.0-flash',
-                    'gemini-1.5-flash',
+                    'gemini-3.6-flash',
+                    'gemini-3.8-flash',
+                    'gemini-3.7-flash',
+                    'gemini-3.5-flash',
+                    'gemini-flash-latest',
                 ]
-                models_to_try = [m for m in candidate_models if m]
+                models_to_try = []
+                for m in candidate_models:
+                    if m and m not in models_to_try:
+                        models_to_try.append(m)
 
                 contents = []
                 if history_messages:
